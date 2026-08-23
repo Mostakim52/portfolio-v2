@@ -1,0 +1,1702 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --accent: #ff4d00;
+  /* Fallbacks for first paint, before the JS in page.js's ResizeObserver
+     measures the real viewport/header height and the real rendered
+     wordmark clearance and overrides these as plain px values. */
+  --screen-h: calc(100vh - 53px);
+  --header-h: 53px;
+  --wordmark-clear: 27rem;
+  --about-marquee-h: calc(100vh - 53px);
+  --about-section-h: calc(100vh - 53px);
+  --journey-marquee-h: calc(100vh - 53px);
+  --journey-section-h: calc(100vh - 53px);
+  --expertise-marquee-h: calc(100vh - 53px);
+  --expertise-section-h: calc(100vh - 53px);
+  --talks-marquee-h: calc(100vh - 53px);
+  --talks-section-h: calc(100vh - 53px);
+  --talks-carousel-h: 640px;
+  --talks-text-max-h: 220px;
+  --applications-marquee-h: calc(100vh - 53px);
+  --applications-section-h: calc(100vh - 53px);
+  --kit-marquee-h: calc(100vh - 53px);
+  --kit-section-h: calc(100vh - 53px);
+  --kit-bubble-size: 300px;
+  --kit-detail-width: 100%;
+  --skills-pixel-art-h: 160px;
+  --info-marquee-h: calc(100vh - 53px);
+  --info-section-h: calc(100vh - 53px);
+  --mail-marquee-h: calc(100vh - 53px);
+  --mail-section-h: calc(100vh - 53px);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* ---------- Scroll snap ----------
+   Wheel/trackpad/touch/keyboard scrolling always comes to rest with
+   exactly one section filling the screen — never half-way between two.
+   `mandatory` (not `proximity`) is what actually enforces that: proximity
+   only snaps when a stop happens to land close to a snap point already,
+   leaving the gap between sections restable; mandatory always resolves to
+   the nearest snap point once the scroll gesture ends, everywhere. This is
+   native browser behavior animated through the same `scroll-behavior:
+   smooth` above, so it doesn't need — and must not fight — any custom JS
+   scroll-hijacking; a previous hand-rolled wheel-interception effect that
+   forced only the very first hero→About scroll caused exactly that kind of
+   dueling-scroll jank once removed in favor of this. */
+html {
+  scroll-snap-type: y mandatory;
+}
+/* Off entirely on mobile (was `proximity`, itself already a fallback from
+   `mandatory` — see the git history for why). Real phone viewports
+   (notches, dynamic browser chrome, the sheer range of aspect ratios,
+   sections like Applications that are legitimately taller than one screen
+   once their content can't be truncated) make it impractical to guarantee
+   every section fits one screen the way desktop is tuned for, and even
+   `proximity`'s gentler snap-attempt was adding a perceptible "catch" as a
+   touch-scroll gesture crossed a section boundary — reading as choppy
+   scrolling. Phones just get plain, native scrolling: nothing pulling
+   sections toward alignment, nothing to fight the browser's own touch
+   momentum. */
+@media (max-width: 767px) {
+  html {
+    scroll-snap-type: none;
+  }
+}
+/* The "start of page" snap point is a dedicated zero-height marker, not
+   #top or the header: #top itself sits at documentY --header-h (right
+   after the header in flow), so snapping to its own top would pull the
+   whole page down by --header-h — right past the point where #top already
+   sits correctly below the header — sliding its content up behind the
+   sticky header instead. The header itself would seem like the right
+   target (it *is* at documentY 0), but a `position: sticky` element
+   doesn't reliably work as a snap target in testing — it settles correctly
+   on load, but scrolling back up from About toward it gets stuck short
+   instead of reaching it. */
+.scroll-top-anchor {
+  scroll-snap-align: start;
+}
+.full-section {
+  scroll-snap-align: start;
+}
+/* The footer isn't a full screen and has no snap point of its own by
+   default — under `mandatory` snapping, scrolling always resolves back to
+   the nearest *defined* snap point, which would make the footer
+   permanently unreachable by wheel/trackpad without one. `end` gives it a
+   resting position: its bottom edge flush with the viewport bottom. */
+footer {
+  scroll-snap-align: end;
+}
+
+body {
+  @apply bg-white text-neutral-900 antialiased;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+.skills-marquee-viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.skills-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-track 34s linear infinite;
+  will-change: transform;
+}
+
+.skills-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+
+.skills-marquee-item,
+.skills-marquee-separator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.skills-marquee-item {
+  padding-right: 0;
+}
+
+.skills-marquee-separator {
+  margin: 0 1.25rem;
+  line-height: 1;
+}
+
+.skills-marquee-item,
+.skills-marquee-separator {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+@keyframes marquee-track {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.site-header {
+  opacity: 0;
+  transform: translateY(-18px);
+  animation: navbar-rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.04s forwards;
+  /* Smooths the light/dark swap driven by data-theme below. */
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+.site-nav-cta {
+  opacity: 0;
+  transform: translateY(-12px);
+  animation: navbar-cta-rise 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.35s forwards;
+}
+
+/* ---------- Dynamic nav theme ----------
+   page.js sets data-theme="dark"|"light" on .site-header based on which
+   section (via each section's own data-nav-theme attribute) currently sits
+   behind the sticky header, so the nav always contrasts with what's
+   underneath it instead of staying a fixed color regardless of section. */
+.site-nav a {
+  transition: color 0.3s ease;
+}
+.site-header[data-theme='dark'] {
+  /* More opaque than the md+ value below on its own — mobile drops the
+     backdrop-blur Tailwind class entirely (see the header's className in
+     page.js): a sticky element blurring everything scrolling underneath
+     it, for the entire time it's on screen (which is the whole page), is
+     a well-known source of scroll jank on mid/low-tier phone GPUs. Without
+     blur softening whatever's behind it, a more opaque fill is what keeps
+     the header reading clearly instead of content showing through sharply. */
+  background-color: rgba(10, 10, 10, 0.94);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+@media (min-width: 768px) {
+  .site-header[data-theme='dark'] {
+    background-color: rgba(10, 10, 10, 0.75);
+  }
+}
+.site-header[data-theme='dark'] .site-nav a:not(.site-nav-cta) {
+  color: rgba(255, 255, 255, 0.65);
+}
+.site-header[data-theme='dark'] .site-nav a:not(.site-nav-cta):hover {
+  color: #fff;
+}
+.site-header[data-theme='dark'] .site-nav-cta {
+  background-color: #fff;
+  color: #111;
+}
+.site-header[data-theme='dark'] .site-nav-cta:hover {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+.site-header[data-theme='dark'] .mk-glyph,
+.site-header[data-theme='dark'] .mk-letter {
+  color: #f2f2f2;
+}
+.site-header[data-theme='dark'] .brand-mark {
+  color: #f2f2f2;
+}
+
+@keyframes navbar-rise {
+  from {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes navbar-cta-rise {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Hero scroll hint (toast, see page.js) ----------
+   The dot nudges gently side to side inside its little track — a small
+   "there's more this way" motion instead of the old scroll-cue's traveling
+   dot, since this version is a compact pill rather than a tall capsule. */
+.hero-hint-dot {
+  animation: hero-hint-dot-move 1.4s ease-in-out infinite;
+}
+@keyframes hero-hint-dot-move {
+  0%,
+  100% {
+    transform: translateY(-3px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-hint-dot {
+    animation: none;
+  }
+}
+
+
+/* Prevent horizontal scrollbar (does not break sticky nav) */
+body {
+  overflow-x: clip;
+}
+
+/* Scrolling stays fully functional (wheel/trackpad/keyboard/touch) — only
+   the visible track/thumb chrome is hidden, matching the chrome-free feel
+   of most high-end portfolio sites. This also removes the scrollbar's
+   reserved gutter width, which is what was making 100%-width elements land
+   a few pixels short of the true right edge on classic (non-overlay)
+   Windows scrollbars. */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* old Edge/IE */
+}
+html::-webkit-scrollbar {
+  display: none; /* Chrome/Edge/Safari */
+}
+
+/* Every primary section fills the *entire* viewport, including the strip
+   behind the sticky translucent header — not just the space beneath it —
+   so scrolling into a section reveals its own background (and, per each
+   section's own `.xxx-content` grid, its rotated marquee watermark too)
+   all the way to the top edge instead of stopping in a hard seam right
+   below the header. Header clearance for actual readable text lives on
+   each section's own `.xxx-text` column (`pt-[var(--header-h)]`) instead
+   of here, so it doesn't also push the marquee/photo columns down. */
+.full-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ---------- Scroll-reveal ----------
+   Each section's heading/content/marquee settles into place the moment it
+   actually arrives on screen — whether you scrolled there by hand or the
+   navbar's smooth-scroll (page.js's scrollToSection) carried you there,
+   since both just cross the same IntersectionObserver threshold (page.js).
+   Deliberately restrained: one straight fade + a short rise, a considered
+   easing curve, and a small stagger between a section's own pieces — no
+   bounce, no bloom/glow, no per-letter confetti. It reveals once per
+   section (not every time you scroll back past it), which reads as
+   composed rather than a slideshow. */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-marquee {
+  opacity: 0;
+  transition: opacity 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-marquee.is-in {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-marquee {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- About section (dark, "MAKER" watermark) ---------- */
+.about-section {
+  isolation: isolate;
+}
+/* Forces the grid (and, via items-stretch, every column including the
+   marquee's) to reach the section's *actual* full height — by default the
+   row only grows as tall as its content needs and then sits centered by
+   `full-section`, leaving black margin above/below that the marquee
+   wouldn't reach. */
+.about-content {
+  min-height: var(--about-section-h);
+  /* Below md, the ticker column is hidden (display:none removes it from
+     the grid entirely) and about-text/about-photo simply stack — with a
+     single `minmax(0,1fr)` row (below) that stretches to the *first* grid
+     item, about-text alone was being stretched to the section's full
+     height (its own centered content floating inside it), then
+     about-photo appended as a second, separately-sized row underneath —
+     which is what left it not reaching the section's true bottom. Two
+     explicit rows instead: text takes only what it needs, the photo gets
+     everything left over (and, via items-stretch, actually fills it). */
+  grid-template-rows: auto minmax(0, 1fr);
+}
+@media (min-width: 768px) {
+  .about-content {
+    /* The container being tall enough isn't sufficient on its own — grid
+       rows still auto-size to content by default, so the single implicit
+       row must be explicitly told to fill 100% of that height before
+       items-stretch has anything to stretch into. */
+    grid-template-rows: minmax(0, 1fr);
+  }
+}
+
+/* The "MAKER" ticker lives in its own column now (not overlapping the text
+   or photo), rotated to run bottom-to-top along the left edge. The rotated
+   element is sized to var(--about-marquee-h) — the column's own *actual*
+   measured height (page.js) — so its pre-rotation "width" exactly becomes
+   the full column height once rotated: it starts flush at the column's
+   bottom and ends flush at its top, not just "roughly viewport height",
+   which can differ once real content sizes the row. */
+.about-marquee-rotate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--about-marquee-h);
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+}
+/* `.hero-marquee.maker-word` (not just `.maker-word`) so this reliably beats
+   the base `.hero-marquee` rule's `position:absolute` regardless of source
+   order — two same-specificity single-class selectors fall back to source
+   order, and `.hero-marquee` is defined later in this file, so a plain
+   `.maker-word` override was silently losing that fight (the element stayed
+   absolutely positioned, dropped out of flow, and collapsed its parent to
+   height:0 — exactly why the strip wasn't reaching the column's edges). */
+.hero-marquee.maker-word {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 11rem;
+  font-size: clamp(4.5rem, 8vw, 8rem);
+}
+.maker-word .hero-marquee-base-layer,
+.maker-word .hero-marquee-reveal-layer {
+  align-items: center;
+}
+/* Default (not reversed) direction: with the -90deg rotation, this now
+   scrolls top-to-bottom on screen. */
+
+/* ---------- Odyssey section (dark, "ODYSSEY" watermark, mirrored layout:
+   marquee on the right instead of the left) ---------- */
+.journey-section {
+  isolation: isolate;
+}
+.journey-content {
+  min-height: var(--journey-section-h);
+  grid-template-rows: minmax(0, 1fr);
+}
+.journey-marquee-rotate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--journey-marquee-h);
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+}
+.hero-marquee.journey-word {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 11rem;
+  font-size: clamp(4.5rem, 8vw, 8rem);
+}
+.journey-word .hero-marquee-base-layer,
+.journey-word .hero-marquee-reveal-layer {
+  align-items: center;
+}
+.journey-word .hero-marquee-track {
+  animation-direction: normal;
+}
+/* Overrides `top` and `height` of next/image's own `fill` inset (inline
+   styles, hence !important) so the photo starts below the navbar instead of
+   running behind it, while `right`/`bottom`/`left` stay at 0 — still
+   touching the section's true bottom edge always. `height` must also be
+   overridden, not just `top`: `fill` sets an explicit `height: 100%`
+   alongside `bottom: 0`, and a positioned box with top, height, *and*
+   bottom all explicit is over-constrained — `bottom` is the one that
+   silently loses, so the box kept its full height and overflowed past the
+   container by exactly the header's height instead of shrinking. The
+   override can't be `height: auto` either — for a *replaced* element like
+   <img>, an absolutely positioned box's `auto` height doesn't solve the
+   top+bottom equation the way it would for a normal element; it falls back
+   to the image's intrinsic aspect ratio instead, which reintroduced the
+   same overflow. An explicit calc() sidesteps both problems. */
+.journey-photo-img {
+  top: var(--header-h) !important;
+  height: calc(100% - var(--header-h)) !important;
+}
+
+/* ---------- Skills & Expertise section (dark, "SKILLS" watermark,
+   layout mirrors About again: marquee back on the left) ---------- */
+.expertise-section {
+  isolation: isolate;
+}
+.expertise-content {
+  min-height: var(--expertise-section-h);
+  grid-template-rows: minmax(0, 1fr);
+}
+.expertise-marquee-rotate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--expertise-marquee-h);
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+}
+.hero-marquee.expertise-word {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 11rem;
+  font-size: clamp(4.5rem, 8vw, 8rem);
+}
+.expertise-word .hero-marquee-base-layer,
+.expertise-word .hero-marquee-reveal-layer {
+  align-items: center;
+}
+/* Sized from the real leftover space below the skill tags (page.js), not a
+   fixed guess — on a shorter viewport the tags themselves sit lower, so a
+   fixed height here would start overlapping them. */
+.skills-pixel-art {
+  height: var(--skills-pixel-art-h, 160px);
+}
+/* A dedicated reveal (not the shared `.reveal`) because this element also
+   needs a permanent translateX(-50%) for centering — `.reveal`'s own
+   transform would replace that offset outright rather than combine with
+   it, including under its `prefers-reduced-motion` !important override, so
+   a separate class folds the -50% into both states here instead. Picked up
+   by the same IntersectionObserver as `.reveal`/`.reveal-marquee`
+   (page.js). */
+.pixel-reveal {
+  opacity: 0;
+  transform: translate(-50%, 28px);
+  transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.pixel-reveal.is-in {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pixel-reveal {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    transition: none;
+  }
+}
+
+/* ---------- Talks section (light, "TALKS" watermark, layout mirrors
+   Odyssey: marquee on the right) ---------- */
+.talks-section {
+  isolation: isolate;
+}
+.talks-content {
+  min-height: var(--talks-section-h);
+  grid-template-rows: minmax(0, 1fr);
+}
+.talks-marquee-rotate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--talks-marquee-h);
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+}
+.hero-marquee.talks-word {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 11rem;
+  font-size: clamp(4.5rem, 8vw, 8rem);
+}
+.talks-word .hero-marquee-base-layer,
+.talks-word .hero-marquee-reveal-layer {
+  align-items: center;
+}
+/* Each logo remounts (React key = its src) whenever the carousel's active
+   card changes, so this animation replays per swap instead of only once. */
+/* Shared by Talks and Kit & Hardware's active-item logo(s) — each one
+   remounts (React key = its src) whenever the active card/build changes,
+   so this animation replays per swap instead of only once. */
+.project-logo {
+  animation: project-logo-in 0.35s ease both;
+}
+@keyframes project-logo-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Project carousel: a 3D coverflow — the active card faces the
+   viewer, its neighbors recede and rotate to the sides, cycling circularly
+   via the arrows/dots or the ArrowLeft/ArrowRight keys (page.js). Shared by
+   Talks and Kit & Hardware; the two var-dependent rules (stage/text
+   max-height) are scoped per-section further down, since each instance
+   needs its own screen-fit budget, not one shared globally. ---------- */
+.project-carousel {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+/* The stage's own height is set inline from page.js (tracking whichever
+   card is currently active — see ProjectCarousel), but max-height is the
+   hard ceiling: --talks-carousel-h / --kit-carousel-h (scoped below) is
+   measured from the section's real available space (page.js), the same
+   "measure, don't guess" approach the About/Odyssey sections use for their
+   marquee columns, so a long card can never push its section past one
+   screen. */
+.project-carousel-stage {
+  position: relative;
+  width: 100%;
+  min-height: 360px;
+  max-height: 640px;
+  /* No *vertical* clipping: the media block and the text block (its own
+     max-height + internal scroll) are sized in page.js to always sum to
+     at most this stage's own budget, so a card should never actually need
+     clipping there — and clipping was cropping the active card's own
+     box-shadow against the stage's tight box, which read as a visible hard
+     edge. Horizontal clipping is different: the "next"/"prev" peek cards
+     are positioned via `translateX` (see .project-carousel-card.is-next/
+     is-prev below), which paints them past their own DOM box regardless of
+     how much room the stage actually has — at some viewport widths (Talks
+     specifically, once a fixed-width logos column sits right next to this
+     stage) that peek visibly overlapped the next grid column's content
+     instead of just fading into empty margin. Clipping X only keeps that
+     contained without touching the vertical shadow room above. */
+  overflow-x: hidden;
+  perspective: 1400px;
+  transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+#talks .project-carousel-stage {
+  max-height: var(--talks-carousel-h, 640px);
+}
+.project-carousel-card {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  /* 85% reads fine on desktop (the 460px cap wins well before then), but
+     on a narrow phone that 15% margin was real width the card could have
+     used — widened it there specifically so more of the mobile screen's
+     already-tight height budget goes to actually-readable text instead of
+     unused side margin. */
+  width: min(460px, 92%);
+  padding: 1.1rem;
+  background: #fff;
+  border: 1px solid rgba(23, 23, 23, 0.08);
+  border-radius: 1.25rem;
+  box-shadow: 0 24px 48px -30px rgba(23, 23, 23, 0.35);
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease,
+    filter 0.55s ease;
+}
+/* Uniform media height across every card type (LinkedIn/Facebook embed,
+   publication cover image, or the text-only placeholder) so the whole deck
+   reads as one consistent size. Scaled as a share of the carousel's own
+   measured budget rather than viewport height alone — on a short screen
+   that budget is already tight, so the image needs to give up room for the
+   text below it, not claim a fixed slice regardless. */
+.project-carousel-media {
+  height: max(140px, 320px);
+}
+#talks .project-carousel-media {
+  height: max(140px, calc(var(--talks-carousel-h, 640px) * 0.5));
+}
+/* Matches the <640px `mediaRatio` drop in page.js's measureCarouselBudget —
+   the media block gives up more of its usual half-share on a short phone
+   screen so the description (the thing actually being read) gets more of
+   an already-small budget. */
+@media (max-width: 639px) {
+  #talks .project-carousel-media {
+    height: max(120px, calc(var(--talks-carousel-h, 640px) * 0.38));
+  }
+}
+/* The text block gets whatever's left of the same budget after the media
+   block (computed in page.js alongside the stage's own cap) and scrolls
+   internally on the rare card whose title/description doesn't fit it —
+   never invisibly cropped, never truncated with "…". Because this cap is
+   on the text block itself (not the whole card), the card still auto-sizes
+   normally, so ProjectCarousel's own height-tracking measurement keeps
+   working. */
+.project-carousel-text {
+  max-height: 220px;
+  overflow-y: auto;
+}
+#talks .project-carousel-text {
+  max-height: var(--talks-text-max-h, 220px);
+}
+.project-carousel-card.is-active {
+  transform: translateX(-50%) translateZ(0) rotateY(0deg) scale(1);
+  opacity: 1;
+  z-index: 3;
+  cursor: default;
+  filter: none;
+}
+.project-carousel-card.is-next {
+  transform: translateX(22%) translateZ(-180px) rotateY(-32deg) scale(0.8);
+  opacity: 0.5;
+  z-index: 2;
+  filter: saturate(0.6) brightness(0.97);
+}
+.project-carousel-card.is-prev {
+  transform: translateX(-122%) translateZ(-180px) rotateY(32deg) scale(0.8);
+  opacity: 0.5;
+  z-index: 2;
+  filter: saturate(0.6) brightness(0.97);
+}
+.project-carousel-card.is-hidden {
+  transform: translateX(-50%) translateZ(-560px) scale(0.45);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.project-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.project-carousel-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(23, 23, 23, 0.14);
+  background: #fff;
+  color: #171717;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+.project-carousel-arrow:hover {
+  background-color: #f5f5f5;
+  border-color: rgba(23, 23, 23, 0.25);
+}
+.project-carousel-arrow:active {
+  transform: scale(0.92);
+}
+.project-carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.project-carousel-dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 9999px;
+  background: rgba(23, 23, 23, 0.15);
+  transition: background-color 0.25s ease, width 0.25s ease;
+}
+.project-carousel-dot.is-active {
+  width: 1.1rem;
+  background: #171717;
+}
+
+/* ---------- Applications section (dark, "APPLICATIONS" watermark, layout
+   mirrors Skills: marquee on the left) ---------- */
+.applications-section {
+  isolation: isolate;
+}
+.applications-content {
+  min-height: var(--applications-section-h);
+  grid-template-rows: minmax(0, 1fr);
+}
+.applications-marquee-rotate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--applications-marquee-h);
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+}
+.hero-marquee.applications-word {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 11rem;
+  font-size: clamp(4.5rem, 8vw, 8rem);
+}
+.applications-word .hero-marquee-base-layer,
+.applications-word .hero-marquee-reveal-layer {
+  align-items: center;
+}
+/* ---------- Information section (dark, "INFORMATION" watermark, layout
+   mirrors Applications: marquee on the left) ---------- */
+.info-section {
+  isolation: isolate;
+}
+.info-content {
+  min-height: var(--info-section-h);
+  grid-template-rows: minmax(0, 1fr);
+}
+.info-marquee-rotate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--info-marquee-h);
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+}
+.hero-marquee.info-word {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 11rem;
+  font-size: clamp(4.5rem, 8vw, 8rem);
+}
+.info-word .hero-marquee-base-layer,
+.info-word .hero-marquee-reveal-layer {
+  align-items: center;
+}
+/* ---------- Mail Me section (light, "MAIL ME" watermark, layout mirrors
+   Kit & Hardware: marquee on the right) ---------- */
+.mail-section {
+  isolation: isolate;
+}
+.mail-content {
+  min-height: var(--mail-section-h);
+  grid-template-rows: minmax(0, 1fr);
+}
+.mail-marquee-rotate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--mail-marquee-h);
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+}
+.hero-marquee.mail-word {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 11rem;
+  font-size: clamp(4.5rem, 8vw, 8rem);
+}
+.mail-word .hero-marquee-base-layer,
+.mail-word .hero-marquee-reveal-layer {
+  align-items: center;
+}
+
+/* ---------- Mail Me: email link + CV badge ---------- */
+.mail-email-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.mail-email-link-text {
+  padding-bottom: 0.1em;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  transition: background-size 0.45s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
+}
+.mail-email-link:hover .mail-email-link-text {
+  background-size: 100% 2px;
+  color: #ff4d00;
+}
+.mail-email-link-arrow {
+  flex-shrink: 0;
+  color: #ff4d00;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mail-email-link:hover .mail-email-link-arrow {
+  transform: translate(3px, -3px);
+}
+/* The badge's own rotation never stops (even on hover — only the color
+   transitions respond to hover, so the motion itself reads as ambient
+   rather than an interaction cue). */
+.cv-badge-spin {
+  animation: cv-badge-rotate 13s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes cv-badge-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv-badge-spin {
+    animation: none;
+  }
+}
+/* A 2x2 grid at every width (not just sm:) — four rich project cards
+   stacked one-per-row would run well past a single screen, and a 2-column
+   grid keeps this section fitting one screen the same as every other. */
+/* A single column below sm (was 2x2 at every width — but reading each
+   card's own text required the "…" truncation this replaced, which is
+   what actually needed the fix; two narrow columns just made that worse).
+   The card is roughly twice as wide now at the base size, so its height
+   comes up to match rather than leaving a very letterboxed strip. */
+.applications-project-media {
+  height: 150px;
+}
+@media (min-width: 480px) {
+  .applications-project-media {
+    height: 190px;
+  }
+}
+@media (min-width: 640px) {
+  .applications-project-media {
+    height: 128px;
+  }
+}
+@media (min-width: 768px) {
+  .applications-project-media {
+    height: 168px;
+  }
+}
+/* Remounts (React key = its own src) on every card hover swap, so it
+   crossfades in fresh rather than snapping straight to the new photo —
+   same idea as Kit & Hardware's background layer. */
+.applications-hover-image {
+  animation: applications-hover-image-in 0.5s ease both;
+}
+@keyframes applications-hover-image-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .applications-hover-image {
+    animation: none;
+  }
+}
+
+/* ---------- Kit & Hardware section (light, "KIT & HARDWARE" watermark,
+   layout mirrors Talks: marquee on the right, a ProjectCarousel of the
+   embedded/microcontroller builds) ---------- */
+.kit-section {
+  isolation: isolate;
+}
+/* Remounts (React key = its own src) whenever the active build changes, so
+   this crossfades in fresh rather than snapping straight to the new photo. */
+.kit-bg-image {
+  animation: kit-bg-image-in 0.6s ease both;
+}
+@keyframes kit-bg-image-in {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kit-bg-image {
+    animation: none;
+  }
+}
+.kit-content {
+  min-height: var(--kit-section-h);
+  grid-template-rows: minmax(0, 1fr);
+}
+.kit-marquee-rotate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--kit-marquee-h);
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center;
+}
+.hero-marquee.kit-word {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  height: 11rem;
+  font-size: clamp(4.5rem, 8vw, 8rem);
+}
+.kit-word .hero-marquee-base-layer,
+.kit-word .hero-marquee-reveal-layer {
+  align-items: center;
+}
+/* Floating bubbles: every build drifts gently in its own spot (own real
+   photo, not a fabricated 3D asset). Click one and it snaps to the center at
+   a larger size, pauses its drift, and the detail panel updates. Below
+   768px the field sits above the (centered) detail text; at/above it they
+   sit side by side with bigger detail type, matched by measureBubbleField's
+   own 768px check in page.js. Percentage-based bubble positions/sizes scale
+   cleanly with the field at any width. */
+.kit-bubble-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+}
+.kit-bubble-field {
+  position: relative;
+  width: min(100%, var(--kit-bubble-size, 300px));
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  margin: 0 auto;
+}
+.kit-bubble-detail {
+  text-align: center;
+}
+/* Replays on every bubble switch — page.js remounts this element (React
+   key = the active index) specifically so the animation restarts each
+   time, instead of only playing once on first mount. */
+.kit-detail-fade {
+  animation: kit-detail-fade-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes kit-detail-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kit-detail-fade {
+    animation: none;
+  }
+}
+@media (min-width: 1024px) {
+  .kit-bubble-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5rem;
+  }
+  .kit-bubble-field {
+    margin: 0;
+  }
+  .kit-bubble-detail {
+    text-align: left;
+    width: var(--kit-detail-width, 400px);
+  }
+}
+.kit-bubble-glow {
+  position: absolute;
+  inset: 20%;
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgba(255, 77, 0, 0.16), transparent 72%);
+  pointer-events: none;
+}
+.kit-bubble {
+  position: absolute;
+  aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  z-index: 2;
+  transition: top 0.55s cubic-bezier(0.22, 1, 0.36, 1), left 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+}
+.kit-bubble.is-active {
+  z-index: 5;
+  opacity: 1;
+}
+.kit-bubble.is-dim {
+  opacity: 0.85;
+}
+.kit-bubble-inner {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 3px solid #fff;
+  box-shadow: 0 10px 22px -10px rgba(23, 23, 23, 0.4);
+  animation: kit-bubble-float var(--kit-bubble-dur, 6s) ease-in-out var(--kit-bubble-delay, 0s)
+    infinite alternate;
+}
+.kit-bubble.is-active .kit-bubble-inner {
+  animation: none;
+  box-shadow: 0 0 0 1px rgba(23, 23, 23, 0.06), 0 24px 48px -20px rgba(255, 77, 0, 0.35);
+}
+.kit-bubble:hover .kit-bubble-inner {
+  box-shadow: 0 14px 28px -10px rgba(23, 23, 23, 0.5);
+}
+@keyframes kit-bubble-float {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-16%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kit-bubble-inner {
+    animation: none;
+  }
+}
+
+/* ---------- Hero name (spotlight + magnetic hover) ---------- */
+.hero-name {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-fancy), var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(3.5rem, 12vw, 11rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: default;
+}
+.hero-name-letter {
+  display: inline-block;
+  will-change: transform;
+}
+.hero-name-word {
+  display: inline-block;
+  white-space: nowrap;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hero-name:hover .hero-name-word.word-0 {
+  transform: translateX(-30px);
+}
+.hero-name:hover .hero-name-word.word-1 {
+  transform: translateX(30px);
+}
+.hero-name-reveal {
+  position: absolute;
+  inset: 0;
+  color: var(--accent);
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    circle 200px at var(--mx, -999px) var(--my, -999px),
+    #000 0%,
+    #000 55%,
+    transparent 80%
+  );
+  mask-image: radial-gradient(
+    circle 200px at var(--mx, -999px) var(--my, -999px),
+    #000 0%,
+    #000 55%,
+    transparent 80%
+  );
+}
+.hero-name-reveal .hero-name-letter {
+  text-shadow: none;
+}
+
+/* ---------- Hero marquee (full-width behind image) ---------- */
+.hero-marquee {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  font-family: var(--font-fancy), var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  /* A custom property (not a literal clamp() repeated in both this and
+     padding-top below) so the mobile override further down only has to
+     change one value and both rules stay in sync. */
+  --hero-marquee-size: clamp(5rem, 15vw, 14rem);
+  font-size: var(--hero-marquee-size);
+  line-height: 1.05;
+  letter-spacing: 0em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  --mx: -999px;
+  --my: -999px;
+  padding-top: 0vh;
+}
+.hero-marquee--upper {
+  animation: hero-marquee-enter 0.45s ease-out 0.12s both;
+}
+.hero-marquee--lower {
+  padding-top: calc(0vh + var(--hero-marquee-size) - 0.2em);
+  animation: hero-marquee-enter 0.5s ease-out 0.55s both;
+}
+/* The 5rem floor in --hero-marquee-size exists so the wordmark stays
+   legible/bold on wide desktop screens where 15vw alone would shrink it
+   too far — but that same floor doesn't shrink with a narrow phone's
+   width, so it dominates there instead: two lines of this text plus the
+   `--wordmark-clear` gap it forces below (page.js measures the real
+   rendered height and pushes hero-copy down by exactly that) was easily
+   a third of a short mobile screen on its own. Lowering the floor lets
+   15vw actually govern on phones. */
+@media (max-width: 639px) {
+  .hero-marquee {
+    --hero-marquee-size: clamp(2.75rem, 15vw, 14rem);
+  }
+}
+.hero-marquee--lower .hero-marquee-track {
+  animation-direction: reverse;
+}
+.hero-marquee-base-layer,
+.hero-marquee-reveal-layer {
+  position: absolute;
+  inset: 0;
+  padding-top: inherit;
+  display: flex;
+  align-items: flex-start;
+}
+.hero-marquee-reveal-layer {
+  color: var(--accent);
+  opacity: 0;
+  animation: hero-marquee-reveal-right 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) 0.2s forwards;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.hero-marquee--lower .hero-marquee-reveal-layer {
+  animation: hero-marquee-reveal-left 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) 0.2s forwards;
+}
+.hero-marquee-base-layer {
+  opacity: 0;
+  animation: hero-marquee-base-fade 0.4s ease-out 0.3s forwards;
+}
+.hero-marquee-reveal-layer .hero-marquee-letter {
+  text-shadow: none;
+}
+.hero-marquee-track {
+  display: flex;
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: hero-marquee-scroll var(--marquee-duration, 60s) linear infinite;
+}
+/* Paused while the enclosing section is nowhere near the viewport (see the
+   `data-animating` IntersectionObserver effect in page.js) — every
+   section's ticker marquee, the hero's tech-stack marquee, Mail Me's CV
+   badge spin, and Kit & Hardware's bubble float all run `infinite`
+   regardless of scroll position since every section is mounted at once;
+   this just stops the ones that are currently invisible from still
+   costing compositor time. `animation-play-state: paused` freezes each at
+   its current frame rather than resetting it, so resuming is seamless. */
+section[data-animating='false'] .hero-marquee-track,
+section[data-animating='false'] .skills-marquee-track,
+section[data-animating='false'] .cv-badge-spin,
+section[data-animating='false'] .kit-bubble-inner {
+  animation-play-state: paused;
+}
+.hero-marquee-group {
+  display: flex;
+  flex-shrink: 0;
+}
+.hero-marquee-base {
+  display: inline-flex;
+}
+.hero-marquee-letter {
+  display: inline-block;
+  will-change: transform;
+}
+
+@keyframes hero-marquee-scroll {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes hero-marquee-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-marquee-reveal-right {
+  0% {
+    opacity: 0;
+    clip-path: circle(0% at 100% 50%);
+    -webkit-clip-path: circle(0% at 100% 50%);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    clip-path: circle(150% at 100% 50%);
+    -webkit-clip-path: circle(150% at 100% 50%);
+  }
+}
+
+@keyframes hero-marquee-reveal-left {
+  0% {
+    opacity: 0;
+    clip-path: circle(0% at 0% 50%);
+    -webkit-clip-path: circle(0% at 0% 50%);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    clip-path: circle(150% at 0% 50%);
+    -webkit-clip-path: circle(150% at 0% 50%);
+  }
+}
+
+@keyframes hero-marquee-base-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.hero-copy {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: hero-copy-fade 0.55s ease forwards;
+  animation-delay: 0.8s;
+  /* --wordmark-clear is set by page.js from the real measured bottom edge
+     of the background wordmark (via ResizeObserver), so this always clears
+     it exactly — no font-size formula guessing. */
+  margin-top: var(--wordmark-clear);
+}
+
+.hero-badge,
+.hero-tagline,
+.hero-intro,
+.hero-cta {
+  opacity: 1;
+}
+
+@keyframes hero-copy-fade {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skills-marquee-shell {
+  opacity: 0;
+  transform-origin: left center;
+  clip-path: inset(0 100% 0 0 round 0.5rem);
+  animation: skills-ribbon-roll 0.6s cubic-bezier(0.2, 0.9, 0.25, 1) 1.2s forwards;
+}
+@keyframes skills-ribbon-roll {
+  0% {
+    opacity: 0;
+    transform: translateX(18%) scaleX(0.08);
+    clip-path: inset(0 100% 0 0 round 999px);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scaleX(1);
+    clip-path: inset(0 0 0 0 round 0);
+  }
+}
+
+.hero-image-shell {
+  /* Below md, the profile photo runs in a flexible-height box that fills
+     whatever room is left down to the skills marquee (see the hero grid's
+     comment in page.js and .hero-image below) — scaling it up another 25%
+     on top of that (desktop's value, meant for a fixed-aspect image with
+     width to spare) badly overflowed that box, since transform:scale()
+     inflates the rendered box past the CSS height that box math is based
+     on. Must match the *same* breakpoint as that layout switch (md, i.e.
+     768px) exactly — this used to cut off at sm (640px) instead, so
+     anything between the two widths got the mobile flexible-box layout
+     *with* the desktop scale still applied, wildly overflowing it.
+     Referencing a custom property (rather than a literal `scale(1.25)`) in
+     the keyframe lets a media query override just this value below
+     without needing a second keyframe. */
+  --hero-image-scale: 1.25;
+  opacity: 0;
+  transform: scale(var(--hero-image-scale)) translateY(0);
+  animation: hero-profile-rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) 1.8s forwards;
+}
+@media (max-width: 767px) {
+  .hero-image-shell {
+    --hero-image-scale: 1;
+  }
+}
+
+@keyframes hero-profile-rise {
+  from {
+    opacity: 0;
+    transform: scale(var(--hero-image-scale)) translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(var(--hero-image-scale)) translateY(0);
+  }
+}
+
+/* Hero image — below md, fills the flexible-height box its grid row now
+   gives it (see the hero grid's own comment in page.js) via `object-fit:
+   contain` bottom-anchored, so any letterboxing lands as space above the
+   photo instead of below it: the photo's bottom edge always reaches the
+   bottom of its box, which is what actually keeps it touching the skills
+   marquee regardless of viewport height. Reset back to the original
+   width-driven/auto-height sizing at md+, unchanged from before. */
+.hero-image-wrap {
+  position: relative;
+  display: block;
+  height: 100%;
+  will-change: transform;
+}
+.hero-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+  transition: none;
+}
+@media (min-width: 768px) {
+  .hero-image-wrap {
+    height: auto;
+  }
+  .hero-image {
+    height: auto;
+    object-fit: initial;
+    object-position: initial;
+  }
+}
+
+/* ---------- MOSTAKIM — bare wordmark, no container ---------- */
+.mostakim-capsule {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.mostakim-capsule.is-scrolled {
+  transform: translate(-50%, -50%) scale(0.8);
+}
+
+.mk-letter-lift {
+  display: inline-flex;
+  will-change: transform;
+}
+.mk-letter {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  margin: 0;
+  padding: 0.1rem 0.12rem;
+  font-family: var(--font-fancy), var(--font-display), system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.375rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: #171717;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.mk-glyph {
+  position: relative;
+  font-weight: 800;
+  color: #171717;
+  transition: color 0.18s ease;
+}
+.mk-letter.is-hover .mk-glyph {
+  color: var(--accent);
+}
+.mk-glyph::before {
+  content: '';
+  position: absolute;
+  inset: -8px -6px;
+  border-radius: 8px;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 77, 0, var(--mk-glow, 0.16)) 0%,
+    rgba(255, 77, 0, 0) 70%
+  );
+  transition: opacity 0.18s ease;
+}
+.mk-letter.is-hover .mk-glyph::before {
+  opacity: 1;
+}
+.mk-letter:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Floating word label — replaces the old inline "emerge" text so the
+   MOSTAKIM wordmark itself never breaks apart. */
+.mk-tooltip {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 14px);
+  transform: translateX(-50%) translateY(-6px) scale(0.85);
+  transform-origin: top center;
+  white-space: nowrap;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 10px 24px rgba(255, 77, 0, 0.35);
+  transition: opacity 0.16s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.mk-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-bottom-color: var(--accent);
+}
+/* `:focus-visible` (not a plain `:focus`) deliberately mirrors `.is-tip`
+   here: per spec it only matches keyboard-driven focus, not a mouse
+   click's, so a click doesn't leave the tooltip stuck open the way
+   tracking plain `focused` in JS did. */
+.mk-letter.is-tip .mk-tooltip,
+.mk-letter:focus-visible .mk-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+.mk-letter-lift:first-child .mk-tooltip {
+  left: 0;
+  right: auto;
+  transform: translateX(0) translateY(-6px) scale(0.85);
+  transform-origin: top left;
+}
+.mk-letter-lift:first-child .mk-letter.is-tip .mk-tooltip,
+.mk-letter-lift:first-child .mk-letter:focus-visible .mk-tooltip {
+  transform: translateX(0) translateY(0) scale(1);
+}
+.mk-letter-lift:first-child .mk-tooltip::after {
+  left: 14px;
+  transform: none;
+}
+.mk-letter-lift:last-child .mk-tooltip {
+  left: auto;
+  right: 0;
+  transform: translateX(0) translateY(-6px) scale(0.85);
+  transform-origin: top right;
+}
+.mk-letter-lift:last-child .mk-letter.is-tip .mk-tooltip,
+.mk-letter-lift:last-child .mk-letter:focus-visible .mk-tooltip {
+  transform: translateX(0) translateY(0) scale(1);
+}
+.mk-letter-lift:last-child .mk-tooltip::after {
+  left: auto;
+  right: 14px;
+  transform: none;
+}
+
+.mk-dot-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.35rem;
+  height: 0;
+  pointer-events: none;
+}
+.mk-dot {
+  position: absolute;
+  bottom: 0;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #ff4d00;
+  box-shadow: 0 0 4px rgba(255, 77, 0, 0.3);
+  transform: translateX(-50%) scale(0);
+  opacity: 0;
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.15s ease, left 0.15s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.25s ease, height 0.25s ease;
+}
+.mk-dot.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+  animation: mk-dot-in 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes mk-dot-in {
+  0% {
+    transform: translateX(-50%) scale(0);
+  }
+  60% {
+    transform: translateX(-50%) scale(1.1);
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+}
+.mk-dot.is-traveling {
+  transform: translateX(-50%) scaleX(1.6) scaleY(0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mostakim-capsule,
+  .mk-letter,
+  .mk-letter-lift,
+  .mk-glyph::before,
+  .mk-tooltip,
+  .mk-dot {
+    transition: none !important;
+    animation: none !important;
+  }
+  .mk-dot.is-visible,
+  .mk-dot.is-traveling {
+    transform: translateX(-50%) scale(1) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .mostakim-capsule {
+    gap: 0;
+    padding: 0.4rem 0.7rem;
+  }
+  .mk-letter {
+    font-size: 0.95rem;
+    padding: 0.1rem 0.06rem;
+  }
+  .mk-tooltip {
+    font-size: 0.65rem;
+    padding: 0.32rem 0.65rem;
+  }
+}
+@media (max-width: 380px) {
+  .mostakim-capsule {
+    display: none;
+  }
+}
+
+/* ---------- Welcome intro ----------
+   A quick "Welcome" cycle across languages on load/refresh before the hero
+   reveals. `.welcome-intro-word` remounts per word (React key = word
+   index — see WelcomeIntro.jsx), replaying the pop-in keyframe each time;
+   the exit is a separate opacity/scale transition on the container itself,
+   triggered by adding `.welcome-intro-exit` once the last word has held. */
+.welcome-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  background: #0a0a0a;
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.welcome-intro-exit {
+  opacity: 0;
+  transform: scale(1.04);
+  pointer-events: none;
+}
+.welcome-intro-word {
+  display: inline-block;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.01em;
+  animation: welcome-word-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes welcome-word-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.88);
+    filter: blur(6px);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+.welcome-intro-track {
+  width: min(220px, 40vw);
+  height: 2px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+.welcome-intro-bar {
+  height: 100%;
+  background: #ff4d00;
+  transition: width linear;
+}
+@media (prefers-reduced-motion: reduce) {
+  .welcome-intro {
+    display: none;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
