@@ -432,24 +432,6 @@ html::-webkit-scrollbar {
 .journey-word .hero-marquee-track {
   animation-direction: normal;
 }
-/* Overrides `top` and `height` of next/image's own `fill` inset (inline
-   styles, hence !important) so the photo starts below the navbar instead of
-   running behind it, while `right`/`bottom`/`left` stay at 0 — still
-   touching the section's true bottom edge always. `height` must also be
-   overridden, not just `top`: `fill` sets an explicit `height: 100%`
-   alongside `bottom: 0`, and a positioned box with top, height, *and*
-   bottom all explicit is over-constrained — `bottom` is the one that
-   silently loses, so the box kept its full height and overflowed past the
-   container by exactly the header's height instead of shrinking. The
-   override can't be `height: auto` either — for a *replaced* element like
-   <img>, an absolutely positioned box's `auto` height doesn't solve the
-   top+bottom equation the way it would for a normal element; it falls back
-   to the image's intrinsic aspect ratio instead, which reintroduced the
-   same overflow. An explicit calc() sidesteps both problems. */
-.journey-photo-img {
-  top: var(--header-h) !important;
-  height: calc(100% - var(--header-h)) !important;
-}
 
 /* ---------- Skills & Expertise section (dark, "SKILLS" watermark,
    layout mirrors About again: marquee back on the left) ---------- */

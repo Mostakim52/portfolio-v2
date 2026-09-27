@@ -16,7 +16,10 @@ import {
   Music,
   Ghost,
   MousePointerClick,
+  ArrowLeft,
+  ArrowRight,
   ArrowUpRight,
+  X,
 } from 'lucide-react';
 import Image from 'next/image';
 import HeroName from './HeroName';
@@ -110,6 +113,131 @@ const data = {
         'Excel / Data Handling',
         'Discord / Trello',
       ],
+    },
+  ],
+  graphicsTools: [
+    { label: 'Adobe Illustrator', src: '/assets/Adobe_Illustrator_CC_icon.svg' },
+    { label: 'Adobe Photoshop', src: '/assets/Adobe_Photoshop_CC_icon.svg' },
+    { label: 'Adobe Lightroom', src: '/assets/Adobe_Photoshop_Lightroom_CC_logo.svg' },
+    { label: 'Canva', src: '/assets/canva-icon.png' },
+    { label: 'Adobe Premiere Pro', src: '/assets/Adobe_Premiere_Pro_CC_icon.svg' },
+    { label: 'Adobe After Effects', src: '/assets/Adobe_After_Effects_CC_icon.svg' },
+    { label: 'Adobe Media Encoder', src: '/assets/Adobe_Media_Encoder_Icon.svg' },
+  ],
+  graphicsSubsections: [
+    {
+      id: 'promo-videos',
+      tab: 'Promo Videos',
+      title: 'Promotional & Introductory Video Production',
+      description:
+        "I specialize in creating high-energy promotional advertisements and professional introductory videos. This project includes a custom commercial advertisement for a client and a comprehensive introductory video for the IEEE NSU Student Branch WIE Affinity Group. My work focuses on seamless transitions, clear messaging, and engaging visuals to effectively represent a brand's identity and mission through video storytelling.",
+      images: [],
+      videos: [
+        '/assets/graphic_designer_section/videos/intro.mp4',
+        '/assets/graphic_designer_section/videos/commercial-ad.mp4',
+        '/assets/graphic_designer_section/videos/jersey-geeks.mp4',
+        '/assets/graphic_designer_section/videos/membership-drive.mp4',
+        '/assets/graphic_designer_section/videos/ramadan.mp4',
+        '/assets/graphic_designer_section/videos/womens-day.mp4',
+      ],
+      files: [],
+    },
+    {
+      id: 'seminars',
+      tab: 'Seminars',
+      title: 'Technical Seminar & Workshop Visuals',
+      description:
+        'I specialize in designing high-impact posters for technical events and engineering workshops. My designs effectively communicate complex topics like AI, IoT, and Web Development to a broad audience, ensuring high engagement and professional aesthetics for university and organizational seminars.',
+      images: [
+        '/assets/graphic_designer_section/seminars/seminar-01.jpg',
+        '/assets/graphic_designer_section/seminars/seminar-02.jpg',
+        '/assets/graphic_designer_section/seminars/seminar-03.jpg',
+        '/assets/graphic_designer_section/seminars/seminar-04.jpg',
+        '/assets/graphic_designer_section/seminars/seminar-05.jpg',
+        '/assets/graphic_designer_section/seminars/seminar-06.png',
+        '/assets/graphic_designer_section/seminars/seminar-07.jpg',
+        '/assets/graphic_designer_section/seminars/seminar-08.jpg',
+        '/assets/graphic_designer_section/seminars/banner.png',
+        '/assets/graphic_designer_section/seminars/particles-to-patterns.jpg',
+        '/assets/graphic_designer_section/seminars/dlp-aurora-poster.jpg',
+        '/assets/graphic_designer_section/seminars/stemup.png',
+        '/assets/graphic_designer_section/seminars/mental-health.jpg',
+      ],
+      videos: [],
+      files: [],
+    },
+    {
+      id: 'certificates',
+      tab: 'Certificates',
+      title: 'Professional Certificates & Award Design',
+      description:
+        'I create official institutional assets, including custom-designed certificates of participation, merit awards, and organizational crests. These designs prioritize clean typography and elegant layouts, providing a sense of authority and prestige for professional recognition and academic milestones.',
+      images: [
+        '/assets/graphic_designer_section/certificates/crests/crest-eb-2025.jpg',
+        '/assets/graphic_designer_section/certificates/crests/crest-leads.jpg',
+        '/assets/graphic_designer_section/certificates/crests/crest-rabbil-hassan.jpg',
+        '/assets/graphic_designer_section/certificates/crests/crest-shining-star.jpg',
+      ],
+      videos: [],
+      files: [
+        {
+          label: 'Certificate of Appreciation',
+          href: '/assets/graphic_designer_section/certificates/certs/certificate-appreciation.pdf',
+        },
+        {
+          label: 'EB Certificates',
+          href: '/assets/graphic_designer_section/certificates/certs/certificates-eb.pdf',
+        },
+        {
+          label: 'Leads Certificates',
+          href: '/assets/graphic_designer_section/certificates/certs/certificates-leads.pdf',
+        },
+        {
+          label: 'Trainer Certificates',
+          href: '/assets/graphic_designer_section/certificates/certs/certificates-trainer.pdf',
+        },
+      ],
+      tags: [],
+    },
+    {
+      id: 'branding',
+      tab: 'Branding',
+      title: 'Institutional Branding & Info-Graphics',
+      description:
+        'I design clean and organized informational layouts for organizations, including executive panel reveals and community awareness graphics. This project demonstrates my ability to present structured data and team hierarchies in a visually appealing and easy-to-read format for social media and internal use.',
+      images: [
+        '/assets/graphic_designer_section/branding/announcements/announcement-01.jpg',
+        '/assets/graphic_designer_section/branding/announcements/weekly-meeting.jpg',
+        '/assets/graphic_designer_section/branding/announcements/announcement-02.jpg',
+        '/assets/graphic_designer_section/branding/announcements/call-for-leads-2025.jpg',
+        '/assets/graphic_designer_section/branding/profiles/profile-01.jpg',
+        '/assets/graphic_designer_section/branding/profiles/profile-02.jpg',
+        '/assets/graphic_designer_section/branding/profiles/profile-03.jpg',
+        '/assets/graphic_designer_section/branding/profiles/profile-04.jpg',
+        '/assets/graphic_designer_section/branding/profiles/profile-05.jpg',
+        '/assets/graphic_designer_section/branding/profiles/profile-06.jpg',
+        '/assets/graphic_designer_section/branding/profiles/speaker-profile.jpg',
+      ],
+      videos: [],
+      files: [],
+    },
+    {
+      id: 'celebratory',
+      tab: 'Celebratory',
+      title: 'Celebratory Materials',
+      description:
+        'Festive visuals for community milestones — luxury gold-themed birthday posters and stories, International Women’s Day greetings, and achievement celebration graphics, all crafted to make every occasion feel special on social media.',
+      images: [
+        '/assets/graphic_designer_section/celebratory/birthday/birthday-01.jpg',
+        '/assets/graphic_designer_section/celebratory/birthday/birthday-02.jpg',
+        '/assets/graphic_designer_section/celebratory/birthday/birthday-03.jpg',
+        '/assets/graphic_designer_section/celebratory/achievements/achievement-01.jpg',
+        '/assets/graphic_designer_section/celebratory/achievements/achievement-02.jpg',
+        '/assets/graphic_designer_section/celebratory/achievements/achievement-03.jpg',
+        '/assets/graphic_designer_section/celebratory/achievements/womens-day-greeting.jpg',
+      ],
+      videos: [],
+      files: [],
     },
   ],
   talksHighlights: [
@@ -759,6 +887,19 @@ export default function Page() {
   }, []);
 
   const [activeTalkIndex, setActiveTalkIndex] = useState(0);
+  const [showGraphics, setShowGraphics] = useState(false);
+  const [activeGraphicsIdx, setActiveGraphicsIdx] = useState(0);
+  const [graphicsLightboxIndex, setGraphicsLightboxIndex] = useState(null);
+  // Derived before any effect below: effects' dependency arrays evaluate
+  // during render, so these must already be initialized by then.
+  const activeGraphics =
+    data.graphicsSubsections[activeGraphicsIdx] ?? data.graphicsSubsections[0];
+  // All media of the active sub-section (images first, then videos) for
+  // the inline scrollable gallery and the per-item lightbox viewer.
+  const graphicsMedia = [
+    ...activeGraphics.images.map((src) => ({ type: 'image', src })),
+    ...activeGraphics.videos.map((src) => ({ type: 'video', src })),
+  ];
   const [activeKitIndex, setActiveKitIndex] = useState(0);
   const [hoveredApp, setHoveredApp] = useState(null);
   const [kitHintVisible, setKitHintVisible] = useState(false);
@@ -781,6 +922,33 @@ export default function Page() {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   }, []);
+
+  // Graphics lightbox lifecycle: lock page scroll, flag the wheel-driven
+  // section-lock below to stand down (so the wheel scrolls the lightbox,
+  // not the page), and handle Escape (close) + arrows (prev/next).
+  useEffect(() => {
+    if (graphicsLightboxIndex === null) return undefined;
+    document.documentElement.dataset.graphicsLightbox = 'open';
+    const prevOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setGraphicsLightboxIndex(null);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const dir = e.key === 'ArrowRight' ? 1 : -1;
+        setGraphicsLightboxIndex((i) =>
+          i === null ? i : (i + dir + graphicsMedia.length) % graphicsMedia.length
+        );
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      delete document.documentElement.dataset.graphicsLightbox;
+      document.documentElement.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [graphicsLightboxIndex, graphicsMedia.length]);
 
   // The hero's scroll nudge — same "toast, not layout" idea as the Kit &
   // Hardware hint below, but rising from the bottom edge instead of
@@ -1276,6 +1444,19 @@ export default function Page() {
     };
 
     const onWheel = (e) => {
+      // The graphics lightbox (Skills section) owns the wheel while open —
+      // its own scrollable gallery must not trigger a section jump.
+      if (document.documentElement.dataset.graphicsLightbox === 'open') return;
+      // A scrollable inline graphics gallery owns the wheel while it can
+      // still scroll further in the gesture's direction — the page only
+      // takes over once it hits the top/bottom edge.
+      const gallery =
+        e.target instanceof Element ? e.target.closest('.graphics-gallery-scroll') : null;
+      if (gallery) {
+        const canUp = gallery.scrollTop > 0;
+        const canDown = gallery.scrollTop + gallery.clientHeight < gallery.scrollHeight - 1;
+        if ((e.deltaY < 0 && canUp) || (e.deltaY > 0 && canDown)) return;
+      }
       // While a commit is in flight, swallow every wheel event instead of
       // just ignoring it — leaving any of them unprevented lets the
       // browser's own native scroll run *at the same time* as the
@@ -1620,16 +1801,12 @@ export default function Page() {
       </section>
 
       {/* Odyssey — the journey/milestones section. Layout mirrors About:
-          the rotated ticker moves to the right, content takes the left. A
-          photo column sits between text and marquee (mirroring About's own
-          photo), full-height so it always touches the section's true top
-          and bottom regardless of viewport height — not a fixed-height
-          image that might fall short on a tall screen. */}
+          the rotated ticker moves to the right, content takes the left. */}
       <section
         id="journey"
         className="journey-section full-section relative overflow-hidden bg-white text-neutral-900"
       >
-        <div className="journey-content relative z-10 grid w-full items-stretch gap-6 py-8 sm:gap-10 sm:py-24 md:grid-cols-[minmax(0,1fr)_18rem_minmax(0,22rem)] md:gap-8 md:py-0 lg:grid-cols-[minmax(0,1fr)_21rem_minmax(0,22rem)] lg:gap-12">
+        <div className="journey-content relative z-10 grid w-full items-stretch gap-6 py-8 sm:gap-10 sm:py-24 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
           <div className="journey-text flex flex-col justify-center space-y-5 px-6 pt-[var(--header-h)] sm:space-y-10 sm:px-10 md:pl-10 md:pr-10 lg:pl-16">
             <div className="reveal">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-400">
@@ -1677,29 +1854,6 @@ export default function Page() {
             </div>
           </div>
 
-          {/* `fill` (absolutely positioned, out of normal flow) rather than
-              a percentage-sized normal image: a percentage-height child of
-              a grid-stretched row is circular during track sizing (the
-              child's height depends on the row's height, which is what's
-              being computed), so browsers fall back to the image's
-              intrinsic aspect ratio for that row's sizing contribution —
-              which inflated this whole row/section past one screen on
-              shorter viewports. `fill` sidesteps that entirely. The photo
-              still starts a little below the navbar instead of running
-              behind it via `.journey-photo-img`'s `top` override
-              (globals.css) rather than padding, since `fill`'s own inset:0
-              ignores padding. No border/frame — a plain full-bleed crop. */}
-          <div className="journey-photo reveal relative hidden h-full w-full overflow-hidden md:block">
-            <Image
-              src="/assets/profile_4.png"
-              alt={data.name}
-              fill
-              sizes="(max-width: 1024px) 18rem, 21rem"
-              className="journey-photo-img object-contain object-bottom"
-              priority={false}
-            />
-          </div>
-
           {/* Rotated "ODYSSEY" ticker — mirrors About's marquee, now on the
               right instead of the left. */}
           <div className="journey-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
@@ -1736,57 +1890,329 @@ export default function Page() {
           </div>
 
           <div className="expertise-text relative flex flex-col justify-start space-y-5 px-6 pt-[calc(var(--header-h)+1.25rem)] sm:space-y-8 sm:px-10 sm:pt-[calc(var(--header-h)+2.5rem)] md:pl-10 md:pr-10 lg:pr-16">
-            <div className="reveal">
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">
-                Skills &amp; Expertise
-              </p>
-              <h2 className="font-display mt-2 max-w-xl text-2xl font-semibold leading-tight tracking-tight text-white sm:mt-4 sm:text-3xl md:text-4xl">
-                Technologies I work with to bring ideas to life.
-              </h2>
-            </div>
+            {/* Two-view slider: the default tech-skills view and the graphic
+                design view that slides in from the right when the round
+                button is pressed. Each slide is exactly one column wide
+                (w-full + shrink-0, overflowing the track), so -100% of the
+                track's own width shifts exactly one view. The wrapper is
+                flex-1 + the track h-full so both slides are full column
+                height — the pixel art stays glued to the section floor. */}
+            <div className="min-w-0 flex-1 overflow-hidden">
+              <div
+                className="flex h-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                style={{ transform: showGraphics ? 'translateX(-100%)' : 'translateX(0)' }}
+              >
+                {/* Slide 1 — tech skills (default view). `relative` so the
+                    pixel art below anchors to this slide and rides out
+                    with it, leaving a complete switch to graphics. */}
+                <div
+                  className="relative w-full shrink-0 space-y-5 sm:space-y-8"
+                  aria-hidden={showGraphics || undefined}
+                >
+                  <div className="reveal">
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">
+                      Skills &amp; Expertise
+                    </p>
+                    <h2 className="font-display mt-2 max-w-xl text-2xl font-semibold leading-tight tracking-tight text-white sm:mt-4 sm:text-3xl md:text-4xl">
+                      Technologies I work with to bring ideas to life.
+                    </h2>
+                  </div>
 
-            <div
-              className="expertise-skills-grid reveal grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-8"
-              style={{ transitionDelay: '150ms' }}
-            >
-              {data.skillCategories.map((category) => (
-                <div key={category.title}>
-                  <h3 className="flex items-center gap-3 text-sm font-semibold text-white">
-                    <span
-                      className="h-2 w-2 rounded-full"
-                      style={{ background: category.color }}
-                    />
-                    {category.title}
-                  </h3>
-                  <div className="mt-2.5 flex flex-wrap gap-2 sm:mt-4">
-                    {category.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70"
-                      >
-                        {skill}
-                      </span>
+                  <div
+                    className="expertise-skills-grid reveal grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-8"
+                    style={{ transitionDelay: '150ms' }}
+                  >
+                    {data.skillCategories.map((category) => (
+                      <div key={category.title}>
+                        <h3 className="flex items-center gap-3 text-sm font-semibold text-white">
+                          <span
+                            className="h-2 w-2 rounded-full"
+                            style={{ background: category.color }}
+                          />
+                          {category.title}
+                        </h3>
+                        <div className="mt-2.5 flex flex-wrap gap-2 sm:mt-4">
+                          {category.skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
+
+                  {/* Right-aligned graphic-design entry point — sits below
+                      the skill tags, pushed to the right edge of the text
+                      column. Pressing it slides in the graphics view. */}
+                  <div
+                    className="reveal flex justify-end pr-2 pt-4 sm:pr-6 lg:pr-10"
+                    style={{ transitionDelay: '250ms' }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setShowGraphics(true)}
+                      aria-label="Show my graphic design skills"
+                      className="group flex aspect-square w-56 flex-col items-center justify-center gap-3 rounded-full border border-white/15 bg-white/5 text-center text-white transition duration-300 hover:scale-105 hover:border-[#ff4d00] hover:bg-[#ff4d00] hover:text-white sm:w-64 lg:w-72"
+                    >
+                      <span className="px-6 text-xl font-semibold leading-tight sm:px-8 sm:text-2xl lg:text-3xl">
+                        My
+                        <br />
+                        <span className="whitespace-nowrap">Graphic Design</span>
+                        <br />
+                        Skills
+                      </span>
+                      <ArrowRight
+                        size={76}
+                        strokeWidth={2.5}
+                        className="transition-transform duration-300 group-hover:translate-x-2"
+                      />
+                    </button>
+                  </div>
+
+                  {/* Pixel art rides with slide 1 (see slide comment above)
+                      so pressing the button clears the whole tech view —
+                      art included — for a complete switch to graphics. */}
+                  <Image
+                    src="/assets/pixel_art.png"
+                    alt={`Pixel art of ${data.name}`}
+                    width={400}
+                    height={300}
+                    className="skills-pixel-art pixel-reveal pointer-events-none absolute bottom-0 left-[42%] z-0 hidden w-auto object-contain object-bottom md:block"
+                  />
                 </div>
-              ))}
+
+                {/* Slide 2 — graphic design skills (slides in from right).
+                    Deliberately bounded (one preview row + expand lightbox)
+                    so this view fits the section's one-screen budget like
+                    every other section. */}
+                <div
+                  className="w-full shrink-0 space-y-4 sm:space-y-5"
+                  aria-hidden={!showGraphics || undefined}
+                >
+                  {/* Header: heading left, design-tool icons top-right. */}
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">
+                        Graphic Design
+                      </p>
+                      <h2 className="font-display mt-2 max-w-xl text-2xl font-semibold leading-tight tracking-tight text-white sm:mt-3 sm:text-3xl md:text-4xl">
+                        Visuals that give ideas their voice.
+                      </h2>
+                    </div>
+                    <div
+                      className="flex flex-wrap items-center gap-2 pt-1"
+                      role="list"
+                      aria-label="Design tools I use"
+                    >
+                      {data.graphicsTools.map((tool) => (
+                        <img
+                          key={tool.label}
+                          src={tool.src}
+                          alt={tool.label}
+                          title={tool.label}
+                          role="listitem"
+                          loading="lazy"
+                          className="h-9 w-9 rounded-lg border border-white/10 sm:h-10 sm:w-10"
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Sub-section tabs */}
+                  <div className="flex flex-wrap gap-2" role="tablist" aria-label="Graphic design sub-sections">
+                    {data.graphicsSubsections.map((sub, i) => (
+                      <button
+                        key={sub.id}
+                        type="button"
+                        role="tab"
+                        aria-selected={i === activeGraphicsIdx}
+                        onClick={() => setActiveGraphicsIdx(i)}
+                        tabIndex={showGraphics ? 0 : -1}
+                        className={`rounded-full border px-4 py-2 text-xs font-medium transition sm:text-sm ${
+                          i === activeGraphicsIdx
+                            ? 'border-[#ff4d00] bg-[#ff4d00] text-white'
+                            : 'border-white/15 bg-white/5 text-white/70 hover:border-white/30 hover:text-white'
+                        }`}
+                      >
+                        {sub.tab}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Active sub-section: description + bounded preview */}
+                  <div key={activeGraphics.id} className="kit-detail-fade space-y-3 sm:space-y-4">
+                    <div>
+                      <h3 className="font-display text-lg font-semibold text-white sm:text-xl">
+                        {activeGraphics.title}
+                      </h3>
+                      <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base">
+                        {activeGraphics.description}
+                      </p>
+                    </div>
+
+                    {graphicsMedia.length > 0 && (
+                      <div className="graphics-gallery-scroll max-h-72 overflow-y-auto rounded-2xl border border-white/10 bg-white/[0.02] p-2 sm:max-h-96 sm:p-3">
+                        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
+                          {graphicsMedia.map((tile, tileIndex) => (
+                            <button
+                              key={tile.src}
+                              type="button"
+                              onClick={() => setGraphicsLightboxIndex(tileIndex)}
+                              tabIndex={showGraphics ? 0 : -1}
+                              aria-label={`Expand ${activeGraphics.title} item ${tileIndex + 1}`}
+                              className="group relative h-28 w-full overflow-hidden rounded-xl border border-white/10 bg-white/5 sm:h-36"
+                            >
+                              {tile.type === 'image' ? (
+                                <Image
+                                  src={tile.src}
+                                  alt=""
+                                  fill
+                                  sizes="(max-width: 640px) 50vw, 30vw"
+                                  className="object-cover transition duration-300 group-hover:scale-105"
+                                />
+                              ) : (
+                                <>
+                                <video
+                                  preload="metadata"
+                                  muted
+                                  playsInline
+                                  src={tile.src}
+                                  aria-hidden="true"
+                                  tabIndex={-1}
+                                  className="h-full w-full object-cover"
+                                />
+                                  <span
+                                    className="absolute inset-0 flex items-center justify-center"
+                                    aria-hidden="true"
+                                  >
+                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/60 transition group-hover:bg-[#ff4d00]">
+                                      <span className="ml-0.5 h-0 w-0 border-y-[6px] border-l-[10px] border-y-transparent border-l-white" />
+                                    </span>
+                                  </span>
+                                </>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Back to the default tech-skills view. */}
+                  <div className="flex justify-start pt-1">
+                    <button
+                      type="button"
+                      onClick={() => setShowGraphics(false)}
+                      aria-label="Back to tech skills"
+                      className="group inline-flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-medium text-white transition hover:border-[#ff4d00] hover:bg-[#ff4d00] hover:text-white"
+                    >
+                      <ArrowLeft
+                        size={18}
+                        strokeWidth={2}
+                        className="transition-transform duration-300 group-hover:-translate-x-1"
+                      />
+                      Back to Tech Skills
+                    </button>
+                  </div>
+                </div>
+
+                {/* Full gallery lightbox lives at the end of this section
+                    (below), outside the transformed slider track — a
+                    `fixed` element inside a transformed ancestor would be
+                    positioned/clipped relative to it instead. */}
+              </div>
             </div>
 
-            {/* A fun personal touch, not part of the grid flow — absolutely
-                positioned and centered against this column's own true
-                bottom edge (which is the section's true bottom edge too,
-                via items-stretch) so it reads as standing on the section's
-                floor. Hidden below md: the skill tags already stack tall
-                enough there to fill the screen on their own. */}
-            <Image
-              src="/assets/pixel_art.png"
-              alt={`Pixel art of ${data.name}`}
-              width={400}
-              height={300}
-              className="skills-pixel-art pixel-reveal pointer-events-none absolute bottom-0 left-[42%] z-0 hidden w-auto object-contain object-bottom md:block"
-            />
           </div>
         </div>
+
+        {/* Per-item lightbox viewer — a direct child of the section (never
+            inside the transformed slider track), so `fixed` truly covers
+            the viewport. Closed via Close / backdrop / Escape, browsed
+            with the arrows or arrow keys. */}
+        {graphicsLightboxIndex !== null && graphicsMedia[graphicsLightboxIndex] && (
+          <div
+            className="fixed inset-0 z-[80] flex items-center justify-center bg-black/90 p-4 sm:p-8"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${activeGraphics.title} item ${graphicsLightboxIndex + 1} of ${graphicsMedia.length}`}
+            onClick={() => setGraphicsLightboxIndex(null)}
+          >
+            <div
+              className="flex max-h-full w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-neutral-950"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between gap-3 border-b border-white/10 p-4 sm:px-6">
+                <div className="flex min-w-0 items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setGraphicsLightboxIndex(
+                        (graphicsLightboxIndex - 1 + graphicsMedia.length) %
+                          graphicsMedia.length
+                      )
+                    }
+                    aria-label="Previous item"
+                    className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:border-[#ff4d00] hover:bg-[#ff4d00]"
+                  >
+                    <ChevronLeft size={18} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setGraphicsLightboxIndex(
+                        (graphicsLightboxIndex + 1) % graphicsMedia.length
+                      )
+                    }
+                    aria-label="Next item"
+                    className="inline-flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white transition hover:border-[#ff4d00] hover:bg-[#ff4d00]"
+                  >
+                    <ChevronRight size={18} />
+                  </button>
+                  <p className="truncate font-display text-base font-semibold text-white sm:text-lg">
+                    {activeGraphics.title}{' '}
+                    <span className="font-sans text-sm font-normal text-white/40">
+                      ({graphicsLightboxIndex + 1} / {graphicsMedia.length})
+                    </span>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setGraphicsLightboxIndex(null)}
+                  autoFocus
+                  aria-label="Close viewer"
+                  className="inline-flex flex-shrink-0 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white transition hover:border-[#ff4d00] hover:bg-[#ff4d00]"
+                >
+                  <X size={16} />
+                  Close
+                </button>
+              </div>
+              <div
+                key={graphicsMedia[graphicsLightboxIndex].src}
+                className="flex items-center justify-center overflow-y-auto bg-black p-4 sm:p-6"
+              >
+                {graphicsMedia[graphicsLightboxIndex].type === 'image' ? (
+                  <img
+                    src={graphicsMedia[graphicsLightboxIndex].src}
+                    alt={`${activeGraphics.title} visual ${graphicsLightboxIndex + 1}`}
+                    className="max-h-[70vh] w-auto max-w-full rounded-xl object-contain"
+                  />
+                ) : (
+                  <video
+                    controls
+                    playsInline
+                    src={graphicsMedia[graphicsLightboxIndex].src}
+                    className="max-h-[70vh] w-full max-w-3xl rounded-xl bg-black"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Talks — layout mirrors Odyssey: content on the left, rotated
