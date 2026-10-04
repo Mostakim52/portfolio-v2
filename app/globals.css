@@ -53,18 +53,18 @@ html {
 html {
   scroll-snap-type: y mandatory;
 }
-/* Off entirely on mobile (was `proximity`, itself already a fallback from
-   `mandatory` — see the git history for why). Real phone viewports
+/* Off entirely below lg (was `proximity` on mobile only, itself already a
+   fallback from `mandatory` — see the git history for why). Phones and
+   portrait tablets get plain, native scrolling: real touch viewports
    (notches, dynamic browser chrome, the sheer range of aspect ratios,
    sections like Applications that are legitimately taller than one screen
    once their content can't be truncated) make it impractical to guarantee
    every section fits one screen the way desktop is tuned for, and even
    `proximity`'s gentler snap-attempt was adding a perceptible "catch" as a
    touch-scroll gesture crossed a section boundary — reading as choppy
-   scrolling. Phones just get plain, native scrolling: nothing pulling
-   sections toward alignment, nothing to fight the browser's own touch
-   momentum. */
-@media (max-width: 767px) {
+   scrolling. Nothing pulling sections toward alignment, nothing to fight
+   the browser's own touch momentum. */
+@media (max-width: 1023px) {
   html {
     scroll-snap-type: none;
   }
@@ -355,7 +355,7 @@ html::-webkit-scrollbar {
      everything left over (and, via items-stretch, actually fills it). */
   grid-template-rows: auto minmax(0, 1fr);
 }
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .about-content {
     /* The container being tall enough isn't sufficient on its own — grid
        rows still auto-size to content by default, so the single implicit
@@ -1305,27 +1305,35 @@ section[data-animating='false'] .kit-bubble-inner {
 }
 
 .hero-image-shell {
-  /* Below md, the profile photo runs in a flexible-height box that fills
+  /* Below lg, the profile photo runs in a flexible-height box that fills
      whatever room is left down to the skills marquee (see the hero grid's
      comment in page.js and .hero-image below) — scaling it up another 25%
      on top of that (desktop's value, meant for a fixed-aspect image with
      width to spare) badly overflowed that box, since transform:scale()
      inflates the rendered box past the CSS height that box math is based
-     on. Must match the *same* breakpoint as that layout switch (md, i.e.
-     768px) exactly — this used to cut off at sm (640px) instead, so
-     anything between the two widths got the mobile flexible-box layout
-     *with* the desktop scale still applied, wildly overflowing it.
-     Referencing a custom property (rather than a literal `scale(1.25)`) in
-     the keyframe lets a media query override just this value below
-     without needing a second keyframe. */
+     on. Must match the *same* breakpoint as that layout switch (lg, i.e.
+     1024px) exactly — anything below it with the desktop scale still
+     applied wildly overflows the flexible box. Referencing a custom
+     property (rather than a literal `scale(1.25)`) in the keyframe lets a
+     media query override just this value below without needing a second
+     keyframe. */
   --hero-image-scale: 1.25;
   opacity: 0;
   transform: scale(var(--hero-image-scale)) translateY(0);
   animation: hero-profile-rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) 1.8s forwards;
 }
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .hero-image-shell {
     --hero-image-scale: 1;
+  }
+}
+/* Short landscape (tablet held sideways, short laptop windows): the
+   fixed-height hero + clipped overflow would guillotine the stacked copy,
+   so let the hero grow naturally and scroll instead. */
+@media (min-width: 768px) and (max-height: 640px) {
+  .hero-shell {
+    height: auto;
+    overflow: visible;
   }
 }
 
@@ -1340,17 +1348,17 @@ section[data-animating='false'] .kit-bubble-inner {
   }
 }
 
-/* Hero image — below md, fills the flexible-height box its grid row now
-   gives it (see the hero grid's own comment in page.js) via `object-fit:
-   contain` bottom-anchored, so any letterboxing lands as space above the
-   photo instead of below it: the photo's bottom edge always reaches the
-   bottom of its box, which is what actually keeps it touching the skills
-   marquee regardless of viewport height. Reset back to the original
-   width-driven/auto-height sizing at md+, unchanged from before. */
+/* Hero image — fills the flexible-height box its grid column gives it (see
+   the hero grid's own comment in page.js) via `object-fit: contain`
+   bottom-anchored, so any letterboxing lands as space above the photo
+   instead of below it: the photo's bottom edge always reaches the bottom
+   of its box, which is what actually keeps it touching the skills marquee
+   regardless of viewport height. Same behavior below and above md. */
 .hero-image-wrap {
   position: relative;
   display: block;
   height: 100%;
+  min-height: 0;
   will-change: transform;
 }
 .hero-image {
@@ -1361,16 +1369,43 @@ section[data-animating='false'] .kit-bubble-inner {
   object-position: center bottom;
   transition: none;
 }
+
+/* ---------- Short viewports (small laptop screens, OS display scaling) —
+   A 14" 1080p laptop almost always runs Windows display scaling (125–150%),
+   so its *CSS* viewport is really ~864x1536 or ~720x1280 — much shorter
+   than a 24" monitor's true 1080px. Content tuned for a tall screen then
+   overflows a full-screen section instead of fitting it. Two levers, both
+   desktop-only (phones get plain scrolling, no snap):
+   1. Shrink the root font-size: Tailwind v3 sizes virtually everything in
+      rem (type, padding, margins, gaps), so one rule compacts every
+      section proportionally. px-measured things (JS budgets, fixed media
+      heights, letterboxed images) adapt on their own or are small enough
+      already.
+   2. Shrink the hero wordmark (vw-based, so lever 1 can't reach it): the
+      hero copy's top margin is measured from its real rendered bottom, so
+      a smaller wordmark automatically pulls the copy up with it. */
+/* Fluid root scaling (desktop only): the root font-size tracks the viewport
+   height continuously — full 16px on tall screens, shrinking proportionally
+   the shorter the screen gets (a 720px-tall laptop viewport computes to
+   ~12.1px). Since Tailwind v3 sizes virtually everything in rem, literally
+   everything scales: type, padding, margins, gaps, the graphics circle,
+   preview thumbs. px-measured things (JS screen-fit budgets, thin fixed
+   media heights, letterboxed images) adapt on their own or are small enough
+   already, and nothing here feeds back into itself (size depends only on
+   the viewport, never on content), so the ResizeObserver measuring in
+   page.js simply re-converges once. Media-query breakpoints are px-based
+   and unaffected; phones keep 16px + plain scrolling. */
 @media (min-width: 768px) {
-  .hero-image-wrap {
-    height: auto;
-  }
-  .hero-image {
-    height: auto;
-    object-fit: initial;
-    object-position: initial;
+  html {
+    font-size: clamp(10px, 1.684vh, 16px);
   }
 }
+/* The hero MOSTAKIM/HOSSAIN wordmark is deliberately excluded from all of
+   the above: it stays at its full clamp(5rem, 15vw, 14rem) size on every
+   screen. (Its rem floor barely moves with the root, and 15vw dominates on
+   desktop, so fluid scaling leaves it effectively untouched.) The hero copy
+   offset is measured from its real rendered edge, so it keeps clearing the
+   wordmark exactly at any size. */
 
 /* ---------- MOSTAKIM — bare wordmark, no container ---------- */
 .mostakim-capsule {

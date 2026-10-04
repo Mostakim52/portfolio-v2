@@ -37,7 +37,7 @@ const data = {
   intro:
     'Full-stack developer focused on clean interfaces, fast performance, and thoughtful details — from the first pixel to the last API.',
   aboutParagraphs: [
-    'I’m a Computer Science student at North South University with a focus on full-stack development and applied AI. I work with Python, Java, JavaScript, C/C++, and modern stacks like React, Node.js, Django, and FastAPI to build end-to-end web applications and APIs.',
+    'I’m a Computer Science and Engineering graduate from North South University with a focus on full-stack development and applied AI. I work with Python, Java, JavaScript, C/C++, and modern stacks like React, Node.js, Django, and FastAPI to build end-to-end web applications and APIs.',
     'My recent work includes embedded IoT prototypes and deep learning projects in speech and NLP, such as hybrid CNN-Transformer and CNN-BiLSTM models for Bengali emotion detection. I care about building practical systems that solve real problems for my campus and community.',
   ],
   journeyStats: [
@@ -820,7 +820,7 @@ function HardwareBubbles({ items, onActiveChange, onInteract }) {
             above the kind/title/description, not off in the section's
             empty margin, so it reads as part of this build's own info. */}
         {activeItem.logos.length > 0 && (
-          <div className="mb-6 hidden flex-nowrap items-center justify-center gap-6 md:flex lg:justify-start">
+          <div className="mb-6 hidden flex-nowrap items-center justify-center gap-6 lg:flex lg:justify-start">
             {activeItem.logos.map((logo) => (
               <img
                 key={logo.src}
@@ -1607,7 +1607,7 @@ export default function Page() {
       {/* Hero */}
       <section
         id="top"
-        className="hero-shell relative z-0 flex min-h-[var(--screen-h)] w-full flex-col items-start overflow-x-hidden px-6 pt-6 sm:px-10"
+        className="hero-shell relative z-0 flex min-h-[var(--screen-h)] w-full flex-col items-start overflow-x-hidden px-6 pt-6 sm:px-10 md:h-[var(--screen-h)] md:overflow-hidden"
       >
         {/* Scroll nudge — rises from the bottom edge rather than living
             inline (see the Kit & Hardware hint, which drops from the
@@ -1636,25 +1636,21 @@ export default function Page() {
 
         <HeroMarquee text="MOSTAKIM" className="hero-marquee--upper" />
         <HeroMarquee text="HOSSAIN" className="hero-marquee--lower" />
-        {/* Below md, this grid itself grows to fill whatever room is left
-            in the hero (flex-1, inside hero-shell's flex column) instead
-            of just sizing to its own content — and within it, the image
-            column gets a `minmax(0,1fr)` row (hero-copy's is `auto`) so
-            *it's* the one that absorbs that space, not empty margin. That
-            makes the image a flexible-height box rather than a fixed-
-            aspect one, which is what actually lets it reach the marquee
-            below on every viewport height: a fixed-aspect image can only
-            ever be as tall as its own ratio allows, so on a viewport
-            taller than that (e.g. a narrow window on a portrait monitor)
-            there was nothing to stop leftover space from landing
-            somewhere as a gap — before, between the image and the
-            marquee; now, restoring `md:mt-auto` on the marquee wrapper
-            below, after the marquee instead, dangling before the next
-            section. Desktop (`md:`) resets all of this back to the
-            original content-sized behavior, unchanged. */}
-        <div className="relative z-10 grid w-full flex-1 grid-rows-[auto_minmax(0,1fr)] items-stretch gap-4 sm:gap-6 md:flex-none md:grid-cols-12 md:grid-rows-none md:items-start md:gap-10">
+        {/* The grid flexes to fill the fixed-height hero (flex-1, min-h-0)
+            at every width — below lg the image column gets a
+            `minmax(0,1fr)` row (hero-copy's is `auto`) so *it's* the one
+            that absorbs leftover space, not empty margin; at lg+ the whole
+            row stretches (`items-stretch`) so the image column is exactly
+            as tall as the leftover space. Either way the image is a
+            flexible-height box (not fixed-aspect), bottom-anchored via
+            object-contain, so its bottom edge always touches the marquee
+            below with no gap and no overflow on any viewport height.
+            Side-by-side starts at lg, not md: portrait tablets (e.g. 820px
+            wide) are too narrow for columns — a tall, narrow image box
+            would letterbox into a giant gap above the photo. */}
+        <div className="relative z-10 grid w-full flex-1 grid-rows-[auto_minmax(0,1fr)] items-stretch gap-4 sm:gap-6 md:min-h-0 md:flex-1 lg:grid-cols-12 lg:grid-rows-none lg:items-stretch lg:gap-10">
           {/* Left: name + copy */}
-          <div className="hero-copy order-1 md:col-span-5">
+          <div className="hero-copy order-1 lg:col-span-5">
             <div className="hero-badge flex items-center gap-3">
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#ff4d00]" />
               <span className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-500">
@@ -1683,8 +1679,8 @@ export default function Page() {
           </div>
 
           {/* Right: profile image */}
-          <div className="order-2 min-h-0 md:col-span-7">
-            <div className="hero-image-shell h-full w-full origin-top md:h-auto">
+          <div className="order-2 min-h-0 lg:col-span-7">
+            <div className="hero-image-shell h-full w-full origin-top">
               <HeroImage
                 src="/assets/profile_3.png"
                 alt={data.name}
@@ -1692,16 +1688,16 @@ export default function Page() {
                 height={700}
                 priority
                 sizes="(max-width: 768px) 90vw, 760px"
-                className="h-full w-full md:h-auto"
+                className="h-full w-full"
               />
             </div>
           </div>
         </div>
 
         {/* Bottom-anchored group: the skills marquee always lives inside the
-            hero. At md+, `mt-auto` pins it to the section's true bottom
+            hero. At lg+, `mt-auto` pins it to the section's true bottom
             edge regardless of how much room the copy/image above it takes
-            up. Below md that same auto-margin was the thing forcing a gap
+            up. Below lg that same auto-margin was the thing forcing a gap
             between the photo and the marquee (it claims *all* the flex
             container's leftover space as its own top margin) — a plain
             small gap there instead so the photo sits right above the
@@ -1709,7 +1705,7 @@ export default function Page() {
             here too, but as an in-flow element it was extra height on top
             of that; it's a dismissible toast (below) now, so it no longer
             costs any layout space either way. */}
-        <div className="relative z-10 mt-0 flex w-full flex-col items-center md:mt-auto">
+        <div className="relative z-10 mt-0 flex w-full flex-col items-center lg:mt-auto">
           <div className="skills-marquee-shell relative w-screen ml-[calc(50%_-_50vw)] mr-[calc(50%_-_50vw)] border-y border-neutral-200 bg-white py-3">
             <div className="skills-marquee-viewport overflow-hidden">
               <div className="skills-marquee-track">
@@ -1754,10 +1750,10 @@ export default function Page() {
         className="about-section full-section relative overflow-hidden bg-neutral-950 text-white"
       >
         <div id="maker" className="scroll-mt-24" aria-hidden="true" />
-        <div className="about-content relative z-10 grid w-full items-stretch gap-6 py-10 sm:gap-8 sm:py-16 md:grid-cols-[minmax(0,22rem)_30%_minmax(0,1fr)] md:gap-8 md:py-0 lg:gap-12">
+        <div className="about-content relative z-10 grid w-full items-stretch gap-6 py-10 sm:gap-8 sm:py-16 lg:grid-cols-[minmax(0,22rem)_30%_minmax(0,1fr)] md:gap-8 md:py-0 lg:gap-12">
           {/* Rotated "MAKER" ticker — its own column, not overlapping the
               text/photo, reading bottom-to-top. */}
-          <div className="about-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
+          <div className="about-marquee-col reveal-marquee relative hidden overflow-hidden lg:block">
             <div className="about-marquee-rotate">
               <HeroMarquee text="MAKER" className="maker-word" repeat={12} duration="46s" />
             </div>
@@ -1806,7 +1802,7 @@ export default function Page() {
         id="journey"
         className="journey-section full-section relative overflow-hidden bg-white text-neutral-900"
       >
-        <div className="journey-content relative z-10 grid w-full items-stretch gap-6 py-8 sm:gap-10 sm:py-24 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
+        <div className="journey-content relative z-10 grid w-full items-stretch gap-6 py-8 sm:gap-10 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
           <div className="journey-text flex flex-col justify-center space-y-5 px-6 pt-[var(--header-h)] sm:space-y-10 sm:px-10 md:pl-10 md:pr-10 lg:pl-16">
             <div className="reveal">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-400">
@@ -1856,7 +1852,7 @@ export default function Page() {
 
           {/* Rotated "ODYSSEY" ticker — mirrors About's marquee, now on the
               right instead of the left. */}
-          <div className="journey-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
+          <div className="journey-marquee-col reveal-marquee relative hidden overflow-hidden lg:block">
             <div className="journey-marquee-rotate">
               <HeroMarquee
                 text="ODYSSEY"
@@ -1876,9 +1872,9 @@ export default function Page() {
         data-nav-theme="dark"
         className="expertise-section full-section relative overflow-hidden bg-neutral-950 text-white"
       >
-        <div className="expertise-content relative z-10 grid w-full items-stretch gap-6 py-8 sm:gap-10 sm:py-24 md:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] md:gap-8 md:py-0 lg:gap-12">
+        <div className="expertise-content relative z-10 grid w-full items-stretch gap-6 py-8 sm:gap-10 sm:py-24 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] md:gap-8 md:py-0 lg:gap-12">
           {/* Rotated "SKILLS" ticker — mirrors About's marquee column. */}
-          <div className="expertise-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
+          <div className="expertise-marquee-col reveal-marquee relative hidden overflow-hidden lg:block">
             <div className="expertise-marquee-rotate">
               <HeroMarquee
                 text="SKILLS"
@@ -1981,7 +1977,7 @@ export default function Page() {
                     alt={`Pixel art of ${data.name}`}
                     width={400}
                     height={300}
-                    className="skills-pixel-art pixel-reveal pointer-events-none absolute bottom-0 left-[42%] z-0 hidden w-auto object-contain object-bottom md:block"
+                    className="skills-pixel-art pixel-reveal pointer-events-none absolute bottom-0 left-[42%] z-0 hidden w-auto object-contain object-bottom lg:block"
                   />
                 </div>
 
@@ -2221,7 +2217,7 @@ export default function Page() {
         id="talks"
         className="talks-section full-section relative overflow-hidden bg-white text-neutral-900"
       >
-        <div className="talks-content relative z-10 grid w-full items-stretch gap-6 py-8 sm:gap-10 sm:py-24 md:grid-cols-[minmax(0,1fr)_18rem_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
+        <div className="talks-content relative z-10 grid w-full items-stretch gap-6 py-8 sm:gap-10 sm:py-24 lg:grid-cols-[minmax(0,1fr)_18rem_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
           <div className="talks-text flex flex-col justify-center space-y-4 px-6 pt-[var(--header-h)] sm:space-y-8 sm:px-10 md:pl-10 md:pr-10 lg:pl-16">
             <div className="project-heading-block reveal">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-400">
@@ -2247,7 +2243,7 @@ export default function Page() {
               article, IEEE Xplore for the conference paper, NSU / IEEE NSU
               SB / IEEE NSU WIE AG for the two workshop posts, nothing for
               the personal-project post. */}
-          <div className="talks-logos hidden flex-col items-center justify-center gap-10 md:flex">
+          <div className="talks-logos hidden flex-col items-center justify-center gap-10 lg:flex">
             {data.talksHighlights[activeTalkIndex]?.logos.map((logo) => (
               <img
                 key={`${activeTalkIndex}-${logo.src}`}
@@ -2259,7 +2255,7 @@ export default function Page() {
           </div>
 
           {/* Rotated "TALKS" ticker — mirrors Odyssey's marquee column. */}
-          <div className="talks-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
+          <div className="talks-marquee-col reveal-marquee relative hidden overflow-hidden lg:block">
             <div className="talks-marquee-rotate">
               <HeroMarquee text="TALKS" className="talks-word" repeat={12} duration="46s" />
             </div>
@@ -2281,7 +2277,7 @@ export default function Page() {
             washed out rather than blending in) — and swaps to whichever
             card the pointer is currently over. */}
         <div
-          className={`pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] transition-opacity duration-500 md:block ${
+          className={`pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] transition-opacity duration-500 lg:block ${
             hoveredApp ? 'opacity-100' : 'opacity-0'
           }`}
         >
@@ -2299,9 +2295,9 @@ export default function Page() {
           ) : null}
           <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/0 to-transparent" />
         </div>
-        <div className="applications-content relative z-10 grid w-full items-stretch gap-10 py-12 sm:py-16 md:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] md:gap-8 md:py-0 lg:gap-12">
+        <div className="applications-content relative z-10 grid w-full items-stretch gap-10 py-12 sm:py-16 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] md:gap-8 md:py-0 lg:gap-12">
           {/* Rotated "APPLICATIONS" ticker — mirrors Skills' marquee column. */}
-          <div className="applications-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
+          <div className="applications-marquee-col reveal-marquee relative hidden overflow-hidden lg:block">
             <div className="applications-marquee-rotate">
               <HeroMarquee
                 text="APPLICATIONS"
@@ -2323,7 +2319,7 @@ export default function Page() {
             </div>
 
             <div
-              className="applications-project-grid reveal grid max-w-3xl grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-20 sm:gap-y-6"
+              className="applications-project-grid reveal grid max-w-5xl grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-16 sm:gap-y-6"
               style={{ transitionDelay: '150ms' }}
             >
               {data.applicationsProjects.map((project) => (
@@ -2400,7 +2396,7 @@ export default function Page() {
             brightness filter (the background here is white, not dark, so
             dimming via brightness would just wash it out to grey instead of
             blending into the page). Swaps per bubble via `key`. */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] md:block">
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] lg:block">
           <Image
             key={data.kitHardwareProjects[activeKitIndex]?.bgImage}
             src={data.kitHardwareProjects[activeKitIndex]?.bgImage}
@@ -2434,7 +2430,7 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="kit-content relative z-10 grid w-full items-stretch gap-10 py-20 sm:py-24 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
+        <div className="kit-content relative z-10 grid w-full items-stretch gap-10 py-20 sm:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
           <div className="kit-text flex flex-col justify-center space-y-3 px-6 pt-[var(--header-h)] sm:px-10 md:pl-10 md:pr-10 lg:pl-16">
             <div className="project-heading-block reveal">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-400">
@@ -2455,7 +2451,7 @@ export default function Page() {
           </div>
 
           {/* Rotated "KIT & HARDWARE" ticker — mirrors Talks' marquee column. */}
-          <div className="kit-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
+          <div className="kit-marquee-col reveal-marquee relative hidden overflow-hidden lg:block">
             <div className="kit-marquee-rotate">
               <HeroMarquee
                 text="KIT & HARDWARE"
@@ -2481,7 +2477,7 @@ export default function Page() {
             absolutely positioned overlay (not a grid column), so it never
             constrains the cards' width; it just sits behind them (no
             z-index vs .info-content's z-10). */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] md:block">
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[55%] lg:block">
           <Image
             src="/assets/profile.jpg"
             alt=""
@@ -2493,9 +2489,9 @@ export default function Page() {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-neutral-950 via-neutral-950/0 to-transparent" />
         </div>
-        <div className="info-content relative z-10 grid w-full items-stretch gap-10 py-12 sm:py-16 md:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] md:gap-8 md:py-0 lg:gap-12">
+        <div className="info-content relative z-10 grid w-full items-stretch gap-10 py-12 sm:py-16 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] md:gap-8 md:py-0 lg:gap-12">
           {/* Rotated "INFORMATION" ticker — mirrors Applications' marquee column. */}
-          <div className="info-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
+          <div className="info-marquee-col reveal-marquee relative hidden overflow-hidden lg:block">
             <div className="info-marquee-rotate">
               <HeroMarquee text="INFORMATION" className="info-word" repeat={10} duration="46s" />
             </div>
@@ -2552,7 +2548,7 @@ export default function Page() {
         id="mail-me"
         className="mail-section full-section relative overflow-hidden bg-white text-neutral-900"
       >
-        <div className="mail-content relative z-10 grid w-full items-stretch gap-10 py-12 sm:py-16 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
+        <div className="mail-content relative z-10 grid w-full items-stretch gap-10 py-12 sm:py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] md:gap-8 md:py-0 lg:gap-12">
           <div className="mail-text relative flex flex-col justify-center space-y-8 px-6 pt-[var(--header-h)] sm:space-y-10 sm:px-10 md:pl-10 md:pr-10 lg:space-y-16 lg:pl-16">
             <div className="reveal">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-neutral-400">
@@ -2605,6 +2601,17 @@ export default function Page() {
                   </p>
                 </div>
               </div>
+
+              {/* Inline Download CV for phones/portrait tablets — the
+                  rotating badge below only shows at lg+. */}
+              <a
+                href="/assets/Mostakim_Hossain_CV.pdf"
+                download
+                className="inline-flex w-fit items-center gap-2 rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-[#ff4d00] lg:hidden"
+              >
+                <Download size={16} />
+                Download CV
+              </a>
             </div>
 
             {/* A rotating badge instead of another boxed "Download CV"
@@ -2615,7 +2622,7 @@ export default function Page() {
               href="/assets/Mostakim_Hossain_CV.pdf"
               download
               aria-label="Download CV"
-              className="cv-badge group absolute bottom-8 right-6 hidden h-28 w-28 items-center justify-center md:flex lg:bottom-10 lg:right-10 lg:h-32 lg:w-32"
+              className="cv-badge group absolute bottom-8 right-6 hidden h-28 w-28 items-center justify-center lg:flex lg:bottom-10 lg:right-10 lg:h-32 lg:w-32"
             >
               <svg viewBox="0 0 100 100" className="cv-badge-spin absolute inset-0 h-full w-full text-neutral-400 transition-colors duration-300 group-hover:text-neutral-900">
                 <defs>
@@ -2634,7 +2641,7 @@ export default function Page() {
           </div>
 
           {/* Rotated "MAIL ME" ticker — mirrors Kit & Hardware's marquee column. */}
-          <div className="mail-marquee-col reveal-marquee relative hidden overflow-hidden md:block">
+          <div className="mail-marquee-col reveal-marquee relative hidden overflow-hidden lg:block">
             <div className="mail-marquee-rotate">
               <HeroMarquee text="MAIL ME" className="mail-word" repeat={10} duration="46s" />
             </div>
